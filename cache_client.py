@@ -7,6 +7,7 @@ from server_config import NODES
 from pickle_hash import serialize_GET, serialize_PUT, deserialize
 from node_ring import NodeRing
 from _rendezvous import RHWNodeRing
+from virtual_consist_hash import VirtualCH
 
 BUFFER_SIZE = 1024
 
@@ -29,7 +30,8 @@ class UDPClient():
 
 
 # ring = NodeRing(nodes=[0, 1, 2, 3])
-ring = RHWNodeRing(nodes=[0, 1, 2, 3])
+# ring = RHWNodeRing(nodes=[0, 1, 2, 3])
+ring = VirtualCH([0, 1, 2, 3], 1000)
 # node = ring.get_node('9ad5794ec94345c4873c4e591788743a')
 
 
