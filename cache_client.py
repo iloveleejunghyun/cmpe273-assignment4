@@ -11,6 +11,10 @@ from virtual_consist_hash import VirtualCH
 
 BUFFER_SIZE = 1024
 
+# ring = NodeRing(nodes=[0, 1, 2, 3])
+# ring = RHWNodeRing(nodes=[0, 1, 2, 3])
+ring = VirtualCH([0, 1, 2, 3], 1000)
+
 
 class UDPClient():
     def __init__(self, host, port):
@@ -28,11 +32,6 @@ class UDPClient():
             print("Error! {}".format(socket.error))
             exit()
 
-
-# ring = NodeRing(nodes=[0, 1, 2, 3])
-# ring = RHWNodeRing(nodes=[0, 1, 2, 3])
-ring = VirtualCH([0, 1, 2, 3], 1000)
-# node = ring.get_node('9ad5794ec94345c4873c4e591788743a')
 
 
 def process(udp_clients):
