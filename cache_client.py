@@ -26,12 +26,14 @@ class UDPClient():
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.sendto(request, (self.host, self.port))
+            s.settimeout(3)
             response, ip = s.recvfrom(BUFFER_SIZE)
             return response
+        except socket.timeout:
+            raise socket.timeout
         except socket.error:
             print("Error! {}".format(socket.error))
             exit()
-
 
 
 def process(udp_clients):
@@ -39,13 +41,15 @@ def process(udp_clients):
     # PUT all users.
     for u in USERS:
         data_bytes, key = serialize_PUT(u)
-        # TODO: PART II - Instead of going to server 0, use Naive hashing to split data into multiple servers
-        # fix_me_server_id = 0
-        # response = udp_clients[fix_me_server_id].send(data_bytes)
 
-        # todo hash
+        # hash
         fix_me_server_id = ring.get_node(key)
-        print(f"key={key},server_id={fix_me_server_id}")
+        print(f"put key={key} to server_id={fix_me_server_id}")
+        response = udp_clients[fix_me_server_id].send(data_bytes)
+
+        # TODO set back-up server as ((server_id +1) % n)
+        fix_me_server_id = (fix_me_server_id+1) % len(udp_clients)
+        print(f"put back up key={key} to server_id={fix_me_server_id}")
         response = udp_clients[fix_me_server_id].send(data_bytes)
 
         hash_codes.add(response)
@@ -63,17 +67,20 @@ def process(udp_clients):
         data_bytes, key = serialize_GET(hc)
         # fix_me_server_id = 0
 
-        # todo hash
+        # hash
         fix_me_server_id = ring.get_node(key)
-        print(f"key={key},server_id={fix_me_server_id}")
-        response = udp_clients[fix_me_server_id].send(data_bytes)
-        # response = udp_clients[fix_me_server_id].send(data_bytes)
+        print(f"get key={key} from server_id={fix_me_server_id}")
+        try:
+            response = udp_clients[fix_me_server_id].send(data_bytes)
+        except socket.timeout:
+            # TODO if the server is down, then get back-up data from ((server_id +1) % n)
+            fix_me_server_id = (fix_me_server_id+1) % len(udp_clients)
+            print(f"get back up key={key} from server_id={fix_me_server_id}")
+            response = udp_clients[fix_me_server_id].send(data_bytes)
 
-        # print(response)
-
-        # debug code, check response
+            # debug code, check response
         resStr = deserialize(response)
-        print(f"parsed data:{resStr}")
+        print(f"get parsed data:{resStr}")
 
 
 if __name__ == "__main__":
