@@ -48,9 +48,9 @@ def process(udp_clients):
         response = udp_clients[fix_me_server_id].send(data_bytes)
 
         # TODO set back-up server as ((server_id +1) % n)
-        fix_me_server_id = (fix_me_server_id+1) % len(udp_clients)
-        print(f"put back up key={key} to server_id={fix_me_server_id}")
-        response = udp_clients[fix_me_server_id].send(data_bytes)
+        # fix_me_server_id = (fix_me_server_id+1) % len(udp_clients)
+        # print(f"put back up key={key} to server_id={fix_me_server_id}")
+        # response = udp_clients[fix_me_server_id].send(data_bytes)
 
         hash_codes.add(response)
         print(response)

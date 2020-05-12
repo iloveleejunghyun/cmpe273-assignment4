@@ -31,15 +31,6 @@ class VirtualCH:
 
     def _hash(self, value):
         k = md5(value.encode('utf-8')).digest()
-        # k = md5(str(value).encode('utf-8')).digest()
-        # k = md5(bytes(value, 'utf-8')).digest()
 
         ha = unpack_from(">I", k)[0]
         return ha
-
-
-# vch = VirtualCH([0, 1, 2, 3], 1000)
-# for item in range(100000):
-#     n = vch.get_node(item)
-#     # print(n)
-# print(vch.get_node_stat())
